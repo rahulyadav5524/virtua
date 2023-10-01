@@ -43,7 +43,7 @@ export const clampStartIndex = (
   scrollDirection: ScrollDirection
 ): number => {
   return max(
-    startIndex - (scrollDirection === SCROLL_DOWN ? 1 : max(1, overscan)),
+    startIndex - (scrollDirection === SCROLL_DOWN ? 0 : max(0, overscan)),
     0
   );
 };
@@ -55,7 +55,7 @@ export const clampEndIndex = (
   count: number
 ): number => {
   return min(
-    endIndex + (scrollDirection === SCROLL_UP ? 1 : max(1, overscan)),
+    endIndex + (scrollDirection === SCROLL_UP ? 0 : max(0, overscan)),
     count - 1
   );
 };
