@@ -6,6 +6,8 @@ import { defineConfig, devices } from "@playwright/test";
  */
 // require('dotenv').config();
 
+const IOS_SPECS = /.ios.spec.ts$/;
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -35,16 +37,19 @@ export default defineConfig({
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      testIgnore: IOS_SPECS,
     },
 
     {
       name: "firefox",
       use: { ...devices["Desktop Firefox"] },
+      testIgnore: IOS_SPECS,
     },
 
     {
       name: "webkit",
       use: { ...devices["Desktop Safari"] },
+      testIgnore: IOS_SPECS,
     },
 
     /* Test against mobile viewports. */
@@ -52,10 +57,11 @@ export default defineConfig({
     //   name: 'Mobile Chrome',
     //   use: { ...devices['Pixel 5'] },
     // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
+    {
+      name: "Mobile Safari",
+      use: { ...devices["iPhone 13"] },
+      testMatch: IOS_SPECS,
+    },
 
     /* Test against branded browsers. */
     // {

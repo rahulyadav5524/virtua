@@ -184,3 +184,89 @@ export const windowScrollToRight = async (
   });
   await scrollable.waitForElementState("stable");
 };
+
+export const scrollWithTouch = (
+  scrollable: ElementHandle<HTMLElement | SVGElement>,
+  target: { fromX: number; toX: number; fromY: number; toY: number }
+) => {
+  return scrollable.evaluate(
+    async (e, [fromX, toX, fromY, toY]) => {
+      e.addEventListener(
+        "touchstart",
+        () => {
+          e.dispatchEvent(
+            new TouchEvent(
+              "touchmove"
+              //  {
+              //   bubbles: true,
+              //   cancelable: true,
+              //   composed: true,
+              //   touches: [
+              //     new Touch({
+              //       identifier: 1,
+              //       target: e,
+              //       clientX: fromX,
+              //       clientY: fromY,
+              //     }),
+              //   ],
+              // }
+            )
+          );
+          e.scrollTop += fromY - toY;
+          e.scrollLeft += fromX - toX;
+        },
+        { once: true, passive: true }
+      );
+
+      e.addEventListener(
+        "scroll",
+        () => {
+          e.dispatchEvent(
+            new TouchEvent(
+              "touchend"
+              //  {
+              //   bubbles: true,
+              //   cancelable: true,
+              //   composed: true,
+              //   touches: [],
+              // }
+            )
+          );
+        },
+        { once: true, passive: true }
+      );
+
+      let resolve: () => void;
+      const touchEnded = new Promise<void>((r) => (resolve = r));
+      e.addEventListener(
+        "touchend",
+        () => {
+          resolve();
+        },
+        { once: true, passive: true }
+      );
+
+      e.dispatchEvent(
+        new TouchEvent(
+          "touchstart"
+          // {
+          //   bubbles: true,
+          //   cancelable: true,
+          //   composed: true,
+          //   touches: [
+          //     new Touch({
+          //       identifier: 1,
+          //       target: e,
+          //       clientX: fromX,
+          //       clientY: fromY,
+          //     }),
+          //   ],
+          // }
+        )
+      );
+
+      await touchEnded;
+    },
+    [target.fromX, target.toX, target.fromY, target.toY]
+  );
+};
